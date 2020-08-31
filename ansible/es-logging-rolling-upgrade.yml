@@ -1,0 +1,3 @@
+- name: es-logging-rolling-upgrade
+  hosts: localhost
+  
