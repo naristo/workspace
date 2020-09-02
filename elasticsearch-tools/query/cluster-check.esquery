@@ -1,0 +1,7 @@
+
+GET _cluster/health
+
+GET _cluster/allocation/explain
+
+POST _cluster/reroute?retry_failed=true
+
