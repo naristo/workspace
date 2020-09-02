@@ -1,0 +1,22 @@
+---
+  - name: Upgrade Data Node
+    hosts: es-logging-data
+    become: yes
+    become_user: slwsvc
+    vars:
+      es_version: 7.9.0
+    tasks:
+      - name: download installer from repo
+        get_url:
+          dest: /tmp/elasticsearch-{{es_version}}-x86_64.rpm
+          url: http://svrrpoprd01/rhel/elasticsearch-7/{{es_version}}/elasticsearch-{{es_version}}-x86_64.rpmi
+      - name: download plugin s3-repository
+        env:
+          HTTP_PROXY: http://svrtscmpr06:3128
+          HTTPS_PROXY: http://svrtscmpr06:3128
+        get_url:
+          dest: /tmp
+          url: https://artifacts.elastic.co/downloads/elasticsearch-plugins/repository-s3/repository-s3-{{es_version}}.zip
+      - name: Disabling culster routing
+        command: "curl -H 'Content-Type: application/json' -XPUT 'http://appelkprd01:9200/_cluster/settings' -d '{\"transient\":{\"cluster.routing.allocation.enable\": \"primaries\"}}'"
+        when: "not versi.stdout.find('{{es_vname}}') != -1 and result.stdout.find('green') != -1"                                                                                                                                                        ~                                                                                                                                                                                                                  ~                                                                
